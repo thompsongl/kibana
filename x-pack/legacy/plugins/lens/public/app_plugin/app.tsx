@@ -9,7 +9,17 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import classNames from 'classnames';
 import { I18nProvider } from '@kbn/i18n/react';
 import { i18n } from '@kbn/i18n';
-import { EuiLink, EuiFlexGroup, EuiFlexItem, EuiBottomBar, EuiButton } from '@elastic/eui';
+import {
+  EuiLink,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiBottomBar,
+  EuiButton,
+  EuiButtonEmpty,
+  EuiPopover,
+  EuiFormRow,
+  EuiFieldText,
+} from '@elastic/eui';
 import { Storage } from 'ui/storage';
 import { CoreStart } from 'src/core/public';
 import { Query } from '../../../../../../src/legacy/core_plugins/data/public';
@@ -36,7 +46,6 @@ interface State {
       to: string;
     };
   };
-  bottomBarIsShowing?: boolean;
 }
 
 function isLocalStateDirty(
@@ -71,6 +80,8 @@ export function App({
   const language =
     store.get('kibana.userQueryLanguage') || core.uiSettings.get('search:queryLanguage');
 
+  const [isTitlePopoverOpen, setIsTitlePopoverOpen] = useState(false);
+
   const [state, setState] = useState<State>({
     isLoading: !!docId,
     isDirty: false,
@@ -87,7 +98,6 @@ export function App({
         to: timeDefaults.to,
       },
     },
-    bottomBarIsShowing: true,
   });
 
   const lastKnownDocRef = useRef<Document | undefined>(undefined);
@@ -157,7 +167,7 @@ export function App({
   );
 
   const classes = classNames('lnsApp', {
-    'lnsApp-bottomBarShowing': state.bottomBarIsShowing,
+    'lnsApp-bottomBarShowing': isSaveable,
   });
 
   const bottomBarClasses = classNames('lnsApp__bottomBar', {
@@ -176,47 +186,6 @@ export function App({
       >
         <div className={classes}>
           <div className="lnsApp__header">
-            <nav>
-              <EuiFlexGroup>
-                <EuiFlexItem grow={false}>
-                  <EuiLink
-                    data-test-subj="lnsApp_saveButton"
-                    onClick={() => {
-                      if (isSaveable && lastKnownDocRef.current) {
-                        docStorage
-                          .save(lastKnownDocRef.current)
-                          .then(({ id }) => {
-                            // Prevents unnecessary network request and disables save button
-                            const newDoc = { ...lastKnownDocRef.current!, id };
-                            setState({
-                              ...state,
-                              isDirty: false,
-                              persistedDoc: newDoc,
-                            });
-                            if (docId !== id) {
-                              redirectTo(id);
-                            }
-                          })
-                          .catch(reason => {
-                            core.notifications.toasts.addDanger(
-                              i18n.translate('xpack.lens.editorFrame.docSavingError', {
-                                defaultMessage: 'Error saving document {reason}',
-                                values: { reason },
-                              })
-                            );
-                          });
-                      }
-                    }}
-                    color={isSaveable ? 'primary' : 'subdued'}
-                    disabled={!isSaveable}
-                  >
-                    {i18n.translate('xpack.lens.editorFrame.save', {
-                      defaultMessage: 'Save',
-                    })}
-                  </EuiLink>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </nav>
             <QueryBarTopRow
               data-test-subj="lnsApp_queryBar"
               screenTitle={'lens'}
@@ -280,17 +249,72 @@ export function App({
           )}
         </div>
 
-        {state.bottomBarIsShowing && (
+        {isSaveable && (
           <EuiBottomBar className={bottomBarClasses} paddingSize="s">
             <EuiFlexGroup gutterSize="s" justifyContent="spaceBetween" alignItems="center">
               <EuiFlexItem grow={false}>
-                {/* <EuiButtonEmpty color="ghost" size="s" iconType="cross">
-                      Discard
-                    </EuiButtonEmpty> */}
+                <EuiPopover
+                  button={
+                    <EuiButtonEmpty
+                      color="ghost"
+                      size="s"
+                      iconType="pencil"
+                      iconSide="right"
+                      onClick={() => setIsTitlePopoverOpen(!isTitlePopoverOpen)}
+                    >
+                      Untitled
+                    </EuiButtonEmpty>
+                  }
+                  isOpen={isTitlePopoverOpen}
+                  closePopover={() => setIsTitlePopoverOpen(false)}
+                  panelPaddingSize="s"
+                  ownFocus
+                >
+                  <div>
+                    <EuiFormRow display="rowCompressed" label="Visualization name">
+                      <EuiFieldText compressed />
+                    </EuiFormRow>
+                  </div>
+                </EuiPopover>
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <EuiButton color="primary" fill size="s" iconType="check">
-                  Save
+                <EuiButton
+                  data-test-subj="lnsApp_saveButton"
+                  color="primary"
+                  fill
+                  size="s"
+                  iconType="save"
+                  disabled={!isSaveable}
+                  onClick={() => {
+                    if (isSaveable && lastKnownDocRef.current) {
+                      docStorage
+                        .save(lastKnownDocRef.current)
+                        .then(({ id }) => {
+                          // Prevents unnecessary network request and disables save button
+                          const newDoc = { ...lastKnownDocRef.current!, id };
+                          setState({
+                            ...state,
+                            isDirty: false,
+                            persistedDoc: newDoc,
+                          });
+                          if (docId !== id) {
+                            redirectTo(id);
+                          }
+                        })
+                        .catch(reason => {
+                          core.notifications.toasts.addDanger(
+                            i18n.translate('xpack.lens.editorFrame.docSavingError', {
+                              defaultMessage: 'Error saving document {reason}',
+                              values: { reason },
+                            })
+                          );
+                        });
+                    }
+                  }}
+                >
+                  {i18n.translate('xpack.lens.editorFrame.save', {
+                    defaultMessage: 'Save changes',
+                  })}
                 </EuiButton>
               </EuiFlexItem>
             </EuiFlexGroup>
