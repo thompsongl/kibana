@@ -113,7 +113,7 @@ export const getInitialState = (props: EditorFrameProps): EditorFrameState => {
   }
 
   return {
-    title: i18n.translate('xpack.lens.chartTitle', { defaultMessage: 'New visualization' }),
+    title: i18n.translate('xpack.lens.chartTitle', { defaultMessage: 'Untitled' }),
     datasourceStates,
     activeDatasourceId: getInitialDatasourceId(props),
     visualization: {
