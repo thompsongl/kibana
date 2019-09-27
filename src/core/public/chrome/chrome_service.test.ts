@@ -211,6 +211,42 @@ Array [
     });
   });
 
+  describe('is nav locked', () => {
+    it('updates/emits isNavLocked', async () => {
+      const service = new ChromeService({ browserSupportsCsp: true });
+      const start = await service.start(defaultStartDeps());
+      const promise = start
+        .getIsNavLocked$()
+        .pipe(toArray())
+        .toPromise();
+
+      start.setIsNavLocked(true);
+      start.setIsNavLocked(false);
+      start.setIsNavLocked(true);
+      service.stop();
+
+      await expect(promise).resolves.toMatchInlineSnapshot(`
+Array [
+  false,
+  true,
+  false,
+  true,
+]
+`);
+    });
+
+    it('only stores true in localStorage', async () => {
+      const service = new ChromeService({ browserSupportsCsp: true });
+      const start = await service.start(defaultStartDeps());
+
+      start.setIsNavLocked(true);
+      expect(store.size).toBe(1);
+
+      start.setIsNavLocked(false);
+      expect(store.size).toBe(0);
+    });
+  });
+
   describe('application classes', () => {
     it('updates/emits the application classes', async () => {
       const service = new ChromeService({ browserSupportsCsp: true });
@@ -361,13 +397,14 @@ Array [
 });
 
 describe('stop', () => {
-  it('completes applicationClass$, isCollapsed$, breadcrumbs$, isVisible$, and brand$ observables', async () => {
+  it('completes applicationClass$, isCollapsed$, isNavLocked$, breadcrumbs$, isVisible$, and brand$ observables', async () => {
     const service = new ChromeService({ browserSupportsCsp: true });
     const start = await service.start(defaultStartDeps());
     const promise = Rx.combineLatest(
       start.getBrand$(),
       start.getApplicationClasses$(),
       start.getIsCollapsed$(),
+      start.getIsNavLocked$(),
       start.getBreadcrumbs$(),
       start.getIsVisible$(),
       start.getHelpExtension$()
@@ -387,6 +424,7 @@ describe('stop', () => {
         start.getBrand$(),
         start.getApplicationClasses$(),
         start.getIsCollapsed$(),
+        start.getIsNavLocked$(),
         start.getBreadcrumbs$(),
         start.getIsVisible$(),
         start.getHelpExtension$()

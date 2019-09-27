@@ -46,6 +46,7 @@ interface State {
       to: string;
     };
   };
+  chromeNavIsLockedOpen?: boolean;
 }
 
 function isLocalStateDirty(
@@ -75,7 +76,6 @@ export function App({
   docStorage: SavedObjectStore;
   redirectTo: (id?: string) => void;
 }) {
-  const chromeNavIsLockedOpen = localStorage.getItem('core.chrome.isLocked');
   const timeDefaults = core.uiSettings.get('timepicker:timeDefaults');
   const language =
     store.get('kibana.userQueryLanguage') || core.uiSettings.get('search:queryLanguage');
@@ -98,9 +98,17 @@ export function App({
         to: timeDefaults.to,
       },
     },
+    chromeNavIsLockedOpen: false,
   });
 
   const lastKnownDocRef = useRef<Document | undefined>(undefined);
+
+  useEffect(() => {
+    const subscription = core.chrome
+      .getIsNavLocked$()
+      .subscribe(isNavLocked => setState({ ...state, chromeNavIsLockedOpen: isNavLocked }));
+    return subscription.unsubscribe;
+  }, []);
 
   // Sync Kibana breadcrumbs any time the saved document's title changes
   useEffect(() => {
@@ -171,7 +179,7 @@ export function App({
   });
 
   const bottomBarClasses = classNames('lnsApp__bottomBar', {
-    'lnsApp__bottomBar-navIsLockedOpen': chromeNavIsLockedOpen === 'true',
+    'lnsApp__bottomBar-navIsLockedOpen': state.chromeNavIsLockedOpen,
   });
 
   return (

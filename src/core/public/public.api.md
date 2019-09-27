@@ -198,6 +198,7 @@ export interface ChromeStart {
     getHelpExtension$(): Observable<ChromeHelpExtension | undefined>;
     getIsCollapsed$(): Observable<boolean>;
     getIsVisible$(): Observable<boolean>;
+    getIsNavLocked$(): Observable<boolean>;
     navControls: ChromeNavControls;
     navLinks: ChromeNavLinks;
     recentlyAccessed: ChromeRecentlyAccessed;
@@ -209,6 +210,7 @@ export interface ChromeStart {
     setHelpExtension(helpExtension?: ChromeHelpExtension): void;
     setIsCollapsed(isCollapsed: boolean): void;
     setIsVisible(isVisible: boolean): void;
+    setIsNavLocked(isNavLocked: boolean): void;
 }
 
 // @public

@@ -33,12 +33,13 @@ import { HttpStart } from '../http';
 import { ChromeNavLinks, NavLinksService } from './nav_links';
 import { ChromeRecentlyAccessed, RecentlyAccessedService } from './recently_accessed';
 import { NavControlsService, ChromeNavControls } from './nav_controls';
-import { LoadingIndicator, HeaderWrapper as Header } from './ui';
+import { LoadingIndicator, Header } from './ui';
 import { DocLinksStart } from '../doc_links';
 
 export { ChromeNavControls, ChromeRecentlyAccessed };
 
 const IS_COLLAPSED_KEY = 'core.chrome.isCollapsed';
+export const IS_NAV_LOCKED_KEY = 'core.chrome.isNavLocked';
 
 function isEmbedParamInHash() {
   const { query } = Url.parse(String(window.location.hash).slice(1), true);
@@ -103,6 +104,7 @@ export class ChromeService {
     const brand$ = new BehaviorSubject<ChromeBrand>({});
     const isVisible$ = new BehaviorSubject(true);
     const isCollapsed$ = new BehaviorSubject(!!localStorage.getItem(IS_COLLAPSED_KEY));
+    const isNavLocked$ = new BehaviorSubject(!!localStorage.getItem(IS_NAV_LOCKED_KEY));
     const applicationClasses$ = new BehaviorSubject<Set<string>>(new Set());
     const helpExtension$ = new BehaviorSubject<ChromeHelpExtension | undefined>(undefined);
     const breadcrumbs$ = new BehaviorSubject<ChromeBreadcrumb[]>([]);
@@ -119,6 +121,15 @@ export class ChromeService {
         })
       );
     }
+
+    const setIsNavLocked = (isNavLocked: boolean) => {
+      isNavLocked$.next(isNavLocked);
+      if (isNavLocked) {
+        localStorage.setItem(IS_NAV_LOCKED_KEY, 'true');
+      } else {
+        localStorage.removeItem(IS_NAV_LOCKED_KEY);
+      }
+    };
 
     return {
       navControls,
@@ -143,6 +154,8 @@ export class ChromeService {
               map(visibility => (FORCE_HIDDEN ? false : visibility)),
               takeUntil(this.stop$)
             )}
+            isNavLocked$={isNavLocked$.pipe(takeUntil(this.stop$))}
+            onIsNavLockedUpdate={setIsNavLocked}
             kibanaVersion={injectedMetadata.getKibanaVersion()}
             legacyMode={injectedMetadata.getLegacyMode()}
             navLinks$={navLinks.getNavLinks$()}
@@ -175,7 +188,6 @@ export class ChromeService {
       setIsVisible: (visibility: boolean) => {
         isVisible$.next(visibility);
       },
-
       getIsCollapsed$: () => isCollapsed$.pipe(takeUntil(this.stop$)),
 
       setIsCollapsed: (isCollapsed: boolean) => {
@@ -186,6 +198,10 @@ export class ChromeService {
           localStorage.removeItem(IS_COLLAPSED_KEY);
         }
       },
+
+      getIsNavLocked$: () => isNavLocked$.pipe(takeUntil(this.stop$)),
+
+      setIsNavLocked,
 
       getApplicationClasses$: () =>
         applicationClasses$.pipe(
@@ -320,6 +336,16 @@ export interface ChromeStart {
    * Set the collapsed state of the chrome navigation.
    */
   setIsCollapsed(isCollapsed: boolean): void;
+
+  /**
+   * Get an observable of the current locked open state of the chrome.
+   */
+  getIsNavLocked$(): Observable<boolean>;
+
+  /**
+   * Set the locked open state of the chrome navigation.
+   */
+  setIsNavLocked(isCollapsed: boolean): void;
 
   /**
    * Get the current set of classNames that will be set on the application container.

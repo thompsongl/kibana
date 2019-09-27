@@ -56,6 +56,8 @@ const createStartContractMock = () => {
     getIsVisible$: jest.fn(),
     setIsCollapsed: jest.fn(),
     getIsCollapsed$: jest.fn(),
+    setIsNavLocked: jest.fn(),
+    getIsNavLocked$: jest.fn(),
     addApplicationClass: jest.fn(),
     removeApplicationClass: jest.fn(),
     getApplicationClasses$: jest.fn(),
@@ -70,6 +72,7 @@ const createStartContractMock = () => {
   startContract.getBrand$.mockReturnValue(new BehaviorSubject({} as ChromeBrand));
   startContract.getIsVisible$.mockReturnValue(new BehaviorSubject(false));
   startContract.getIsCollapsed$.mockReturnValue(new BehaviorSubject(false));
+  startContract.getIsNavLocked$.mockReturnValue(new BehaviorSubject(false));
   startContract.getApplicationClasses$.mockReturnValue(new BehaviorSubject(['class-name']));
   startContract.getBadge$.mockReturnValue(new BehaviorSubject({} as ChromeBadge));
   startContract.getBreadcrumbs$.mockReturnValue(new BehaviorSubject([{} as ChromeBreadcrumb]));

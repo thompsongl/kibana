@@ -21,6 +21,7 @@ import Url from 'url';
 
 import React, { Component, createRef, Fragment } from 'react';
 import * as Rx from 'rxjs';
+import classnames from 'classnames';
 
 import {
   // TODO: add type annotations
@@ -64,7 +65,7 @@ import {
   ChromeNavControl,
 } from '../..';
 import { HttpStart } from '../../../http';
-import { ChromeHelpExtension } from '../../chrome_service';
+import { ChromeHelpExtension, IS_NAV_LOCKED_KEY } from '../../chrome_service';
 import { ApplicationStart, InternalApplicationStart } from '../../../application/types';
 
 // Providing a buffer between the limit and the cut off index
@@ -177,8 +178,8 @@ interface Props {
   navControlsRight$: Rx.Observable<readonly ChromeNavControl[]>;
   intl: InjectedIntl;
   basePath: HttpStart['basePath'];
-  isLocked?: boolean;
-  onIsLockedUpdate?: (isLocked: boolean) => void;
+  isNavLocked$: Rx.Observable<boolean>;
+  onIsNavLockedUpdate?: (isNavLocked: boolean) => void;
 }
 
 interface State {
@@ -190,6 +191,7 @@ interface State {
   forceNavigation: boolean;
   navControlsLeft: readonly ChromeNavControl[];
   navControlsRight: readonly ChromeNavControl[];
+  isNavLocked: boolean;
 }
 
 class HeaderUI extends Component<Props, State> {
@@ -207,6 +209,7 @@ class HeaderUI extends Component<Props, State> {
       forceNavigation: false,
       navControlsLeft: [],
       navControlsRight: [],
+      isNavLocked: !!localStorage.getItem(IS_NAV_LOCKED_KEY),
     };
   }
 
@@ -221,7 +224,8 @@ class HeaderUI extends Component<Props, State> {
       Rx.combineLatest(
         this.props.navControlsLeft$,
         this.props.navControlsRight$,
-        this.props.application.currentAppId$
+        this.props.application.currentAppId$,
+        this.props.isNavLocked$
       )
     ).subscribe({
       next: ([
@@ -230,7 +234,7 @@ class HeaderUI extends Component<Props, State> {
         forceNavigation,
         navLinks,
         recentlyAccessed,
-        [navControlsLeft, navControlsRight, currentAppId],
+        [navControlsLeft, navControlsRight, currentAppId, isNavLocked],
       ]) => {
         this.setState({
           appTitle,
@@ -245,6 +249,7 @@ class HeaderUI extends Component<Props, State> {
           navControlsLeft,
           navControlsRight,
           currentAppId,
+          isNavLocked,
         });
       },
     });
@@ -291,10 +296,9 @@ class HeaderUI extends Component<Props, State> {
       breadcrumbs$,
       helpExtension$,
       intl,
-      isLocked,
       kibanaDocLink,
       kibanaVersion,
-      onIsLockedUpdate,
+      onIsNavLockedUpdate,
       legacyMode,
     } = this.props;
     const {
@@ -305,6 +309,7 @@ class HeaderUI extends Component<Props, State> {
       navControlsRight,
       navLinks,
       recentlyAccessed,
+      isNavLocked,
     } = this.state;
 
     if (!isVisible) {
@@ -375,8 +380,16 @@ class HeaderUI extends Component<Props, State> {
       },
     ];
 
+    const className = classnames(
+      'chrHeaderWrapper',
+      {
+        'chrHeaderWrapper--navIsLocked': isNavLocked,
+      },
+      'hide-for-sharing'
+    );
+
     return (
-      <Fragment>
+      <div className={className} data-test-subj="headerGlobalNav">
         <EuiHeader>
           <EuiHeaderSection grow={false}>
             <EuiShowFor sizes={['xs', 's']}>
@@ -404,14 +417,14 @@ class HeaderUI extends Component<Props, State> {
         <EuiNavDrawer
           ref={this.navDrawerRef}
           data-test-subj="navDrawer"
-          isLocked={isLocked}
-          onIsLockedUpdate={onIsLockedUpdate}
+          isLocked={isNavLocked}
+          onIsLockedUpdate={onIsNavLockedUpdate}
         >
           <EuiNavDrawerGroup listItems={recentLinksArray} />
           <EuiHorizontalRule margin="none" />
           <EuiNavDrawerGroup data-test-subj="navDrawerAppsMenu" listItems={navLinksArray} />
         </EuiNavDrawer>
-      </Fragment>
+      </div>
     );
   }
 
