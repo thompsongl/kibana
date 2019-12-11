@@ -53,6 +53,7 @@ export default {
     '!src/legacy/ui/public/{agg_types,vis}/**/*.d.ts',
   ],
   moduleNameMapper: {
+    '@elastic/eui$': '<rootDir>/node_modules/@elastic/eui/dist/testenv.js',
     '^src/plugins/(.*)': '<rootDir>/src/plugins/$1',
     '^plugins/([^\/.]*)(.*)': '<rootDir>/src/legacy/core_plugins/$1/public$2',
     '^ui/(.*)': '<rootDir>/src/legacy/ui/public/$1',
@@ -98,9 +99,9 @@ export default {
     '^.+\\.html?$': 'jest-raw-loader',
   },
   transformIgnorePatterns: [
-    // ignore all node_modules except @elastic/eui and monaco-editor which both require babel transforms to handle dynamic import()
+    // ignore all node_modules except monaco-editor which requires babel transforms to handle dynamic import()
     // since ESM modules are not natively supported in Jest yet (https://github.com/facebook/jest/issues/4842)
-    '[/\\\\]node_modules(?![\\/\\\\]@elastic[\\/\\\\]eui)(?![\\/\\\\]monaco-editor)[/\\\\].+\\.js$',
+    '[/\\\\]node_modules(?![\\/\\\\]monaco-editor)[/\\\\].+\\.js$',
     'packages/kbn-pm/dist/index.js'
   ],
   snapshotSerializers: [

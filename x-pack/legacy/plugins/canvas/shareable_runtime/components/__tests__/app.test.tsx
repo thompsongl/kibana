@@ -4,10 +4,10 @@
  * you may not use this file except in compliance with the Elastic License.
  */
 
-/*	
-  One test relies on react-dom at a version of 16.9... it can be enabled	
-  once renovate completes the upgrade.  Relevant code has been commented out	
-  in the meantime.	
+/*
+  One test relies on react-dom at a version of 16.9... it can be enabled
+  once renovate completes the upgrade.  Relevant code has been commented out
+  in the meantime.
 */
 
 import { mount, ReactWrapper } from 'enzyme';
@@ -32,19 +32,20 @@ import { openSettings, selectMenuItem } from '../../test/interactions';
 
 // Mock the renderers
 jest.mock('../../supported_renderers');
+jest.mock('@elastic/eui');
 
 // Mock the EuiPortal - `insertAdjacentElement is not supported in
 // `jsdom` 12.  We're just going to render a `div` with the children
 // so the `enzyme` tests will be accurate.
-jest.mock('@elastic/eui/lib/components/portal/portal', () => {
-  // Local constants are not supported in Jest mocks-- they must be
-  // imported within the mock.
-  // eslint-disable-next-line no-shadow
-  const React = require.requireActual('react');
-  return {
-    EuiPortal: (props: any) => <div>{props.children}</div>,
-  };
-});
+// jest.mock('@elastic/eui/lib/components/portal/portal', () => {
+//   // Local constants are not supported in Jest mocks-- they must be
+//   // imported within the mock.
+//   // eslint-disable-next-line no-shadow
+//   const React = require.requireActual('react');
+//   return {
+//     EuiPortal: (props: any) => <div>{props.children}</div>,
+//   };
+// });
 
 const getWrapper: (name?: WorkpadNames) => ReactWrapper = (name = 'hello') => {
   const workpad = sharedWorkpads[name];
