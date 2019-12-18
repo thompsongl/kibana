@@ -16,7 +16,8 @@ export function createJestConfig({ kibanaDirectory, xPackKibanaDirectory }) {
     ],
     moduleFileExtensions: ['js', 'json', 'ts', 'tsx'],
     moduleNameMapper: {
-      '@elastic/eui$': `${kibanaDirectory}/node_modules/@elastic/eui/dist/testenv.js`,
+      '@elastic/eui$': `${kibanaDirectory}/node_modules/@elastic/eui/kbn-test`,
+      '@elastic/eui/lib/(.*)?': `${kibanaDirectory}/node_modules/@elastic/eui/kbn-test/$1`,
       '^ui/(.*)': `${kibanaDirectory}/src/legacy/ui/public/$1`,
       'uiExports/(.*)': fileMockPath,
       '^src/core/(.*)': `${kibanaDirectory}/src/core/$1`,
