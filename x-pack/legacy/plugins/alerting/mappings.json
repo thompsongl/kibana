@@ -13,8 +13,12 @@
       "alertTypeId": {
         "type": "keyword"
       },
-      "interval": {
-        "type": "keyword"
+      "schedule": {
+        "properties": {
+          "interval": {
+            "type": "keyword"
+          }
+        }
       },
       "actions": {
         "type": "nested",
@@ -23,6 +27,9 @@
             "type": "keyword"
           },
           "actionRef": {
+            "type": "keyword"
+          },
+          "actionTypeId": {
             "type": "keyword"
           },
           "params": {

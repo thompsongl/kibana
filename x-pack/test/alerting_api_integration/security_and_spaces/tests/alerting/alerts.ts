@@ -450,7 +450,7 @@ export default function alertTests({ getService }: FtrProviderContext) {
           const response = await alertUtils.createAlwaysFiringAction({
             reference,
             overwrites: {
-              interval: '1s',
+              schedule: { interval: '1s' },
             },
           });
 
@@ -490,7 +490,7 @@ export default function alertTests({ getService }: FtrProviderContext) {
           const response = await alertUtils.createAlwaysFiringAction({
             reference,
             overwrites: {
-              interval: '1s',
+              schedule: { interval: '1s' },
               params: {
                 index: ES_TEST_INDEX_NAME,
                 reference,
@@ -532,6 +532,7 @@ export default function alertTests({ getService }: FtrProviderContext) {
               break;
             case 'space_1_all at space1':
             case 'superuser at space1':
+              expect(response.statusCode).to.eql(200);
               // Wait for actions to execute twice before disabling the alert and waiting for tasks to finish
               await esTestIndexTool.waitForDocs('action:test.index-record', reference, 2);
               await alertUtils.disable(response.body.id);
@@ -559,7 +560,7 @@ export default function alertTests({ getService }: FtrProviderContext) {
           const response = await alertUtils.createAlwaysFiringAction({
             reference,
             overwrites: {
-              interval: '1s',
+              schedule: { interval: '1s' },
               params: {
                 index: ES_TEST_INDEX_NAME,
                 reference,
@@ -605,7 +606,7 @@ export default function alertTests({ getService }: FtrProviderContext) {
             reference,
             overwrites: {
               enabled: false,
-              interval: '1s',
+              schedule: { interval: '1s' },
             },
           });
 
@@ -650,7 +651,7 @@ export default function alertTests({ getService }: FtrProviderContext) {
             reference,
             overwrites: {
               enabled: false,
-              interval: '1s',
+              schedule: { interval: '1s' },
             },
           });
 
@@ -695,7 +696,7 @@ export default function alertTests({ getService }: FtrProviderContext) {
             reference,
             overwrites: {
               enabled: false,
-              interval: '1s',
+              schedule: { interval: '1s' },
             },
           });
 

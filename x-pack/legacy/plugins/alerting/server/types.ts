@@ -49,13 +49,19 @@ export type AlertActionParams = SavedObjectAttributes;
 export interface AlertAction {
   group: string;
   id: string;
+  actionTypeId: string;
   params: AlertActionParams;
 }
 
 export interface RawAlertAction extends SavedObjectAttributes {
   group: string;
   actionRef: string;
+  actionTypeId: string;
   params: AlertActionParams;
+}
+
+export interface IntervalSchedule extends SavedObjectAttributes {
+  interval: string;
 }
 
 export interface Alert {
@@ -63,7 +69,7 @@ export interface Alert {
   name: string;
   tags: string[];
   alertTypeId: string;
-  interval: string;
+  schedule: IntervalSchedule;
   actions: AlertAction[];
   params: Record<string, any>;
   scheduledTaskId?: string;
@@ -81,7 +87,7 @@ export interface RawAlert extends SavedObjectAttributes {
   name: string;
   tags: string[];
   alertTypeId: string;
-  interval: string;
+  schedule: SavedObjectAttributes;
   actions: RawAlertAction[];
   params: SavedObjectAttributes;
   scheduledTaskId?: string;
