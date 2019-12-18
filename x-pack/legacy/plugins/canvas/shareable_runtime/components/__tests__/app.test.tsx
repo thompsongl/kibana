@@ -32,7 +32,6 @@ import { openSettings, selectMenuItem } from '../../test/interactions';
 
 // Mock the renderers
 jest.mock('../../supported_renderers');
-// jest.mock('@elastic/eui');
 
 // Mock the EuiPortal - `insertAdjacentElement is not supported in
 // `jsdom` 12.  We're just going to render a `div` with the children
