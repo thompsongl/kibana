@@ -6,7 +6,10 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EuiThemeProvider, DefaultEuiTheme } from '@elastic/eui';
+import {
+  EuiThemeProvider,
+  // DefaultEuiTheme
+} from '@elastic/eui';
 import { routes } from '../../apps';
 import { shortcutManager } from '../../lib/shortcut_manager';
 import { getWindow } from '../../lib/get_window';
@@ -59,17 +62,19 @@ export class App extends React.PureComponent {
     }
 
     return (
+      // EuiThemeProvider isn't strictly necessary here.
+      // Fallback to the default EUI theme will occur without it.
       <EuiThemeProvider
-        theme={DefaultEuiTheme}
-        colorMode="light"
-        // overrides={{
-        //   light: {
-        //     colors: { euiColorPrimary: '#8A07BD' },
-        //   },
-        //   dark: {
-        //     colors: { euiColorPrimary: '#BD07A5' },
-        //   },
-        // }}
+      // theme={DefaultEuiTheme}
+      // colorMode="light"
+      // overrides={{
+      //   light: {
+      //     colors: { euiColorPrimary: '#8A07BD' },
+      //   },
+      //   dark: {
+      //     colors: { euiColorPrimary: '#BD07A5' },
+      //   },
+      // }}
       >
         <div className="canvas canvasContainer">
           <Router
