@@ -20,6 +20,7 @@ import {
   EuiTextArea,
   EuiAccordion,
   EuiButton,
+  useEuiTheme,
 } from '@elastic/eui';
 
 import { VarConfig } from '../var_config';
@@ -45,6 +46,7 @@ interface Props {
 }
 
 export const WorkpadConfig: FunctionComponent<Props> = (props) => {
+  const [theme] = useEuiTheme();
   const [css, setCSS] = useState(props.css);
   const { size, name, setSize, setName, setWorkpadCSS, variables, setWorkpadVariables } = props;
   const rotate = () => setSize({ width: size.height, height: size.width });
@@ -71,7 +73,7 @@ export const WorkpadConfig: FunctionComponent<Props> = (props) => {
   return (
     <div>
       <div className="canvasLayout__sidebarHeaderWorkpad">
-        <EuiTitle size="xs">
+        <EuiTitle size="xs" css={{ color: theme.colors.euiColorPrimary }}>
           <h4>{strings.getTitle()}</h4>
         </EuiTitle>
       </div>
