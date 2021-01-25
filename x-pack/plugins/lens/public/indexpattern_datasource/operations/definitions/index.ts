@@ -9,6 +9,7 @@ import { IStorageWrapper } from 'src/plugins/kibana_utils/public';
 import { termsOperation, TermsIndexPatternColumn } from './terms';
 import { filtersOperation, FiltersIndexPatternColumn } from './filters';
 import { cardinalityOperation, CardinalityIndexPatternColumn } from './cardinality';
+import { percentileOperation, PercentileIndexPatternColumn } from './percentile';
 import {
   minOperation,
   MinIndexPatternColumn,
@@ -58,6 +59,7 @@ export type IndexPatternColumn =
   | CardinalityIndexPatternColumn
   | SumIndexPatternColumn
   | MedianIndexPatternColumn
+  | PercentileIndexPatternColumn
   | CountIndexPatternColumn
   | LastValueIndexPatternColumn
   | CumulativeSumIndexPatternColumn
@@ -82,6 +84,7 @@ const internalOperationDefinitions = [
   cardinalityOperation,
   sumOperation,
   medianOperation,
+  percentileOperation,
   lastValueOperation,
   countOperation,
   rangeOperation,
@@ -96,6 +99,7 @@ export { rangeOperation } from './ranges';
 export { filtersOperation } from './filters';
 export { dateHistogramOperation } from './date_histogram';
 export { minOperation, averageOperation, sumOperation, maxOperation } from './metrics';
+export { percentileOperation } from './percentile';
 export { countOperation } from './count';
 export { lastValueOperation } from './last_value';
 export {
@@ -119,6 +123,12 @@ export interface ParamEditorProps<C> {
   savedObjectsClient: SavedObjectsClientContract;
   http: HttpSetup;
   dateRange: DateRange;
+  data: DataPublicPluginStart;
+}
+
+export interface HelpProps<C> {
+  currentColumn: C;
+  uiSettings: IUiSettingsClient;
   data: DataPublicPluginStart;
 }
 
@@ -197,6 +207,8 @@ interface BaseOperationDefinitionProps<C extends BaseIndexPatternColumn> {
    * If set to optional, time scaling won't be enabled by default and can be removed.
    */
   timeScalingMode?: TimeScalingMode;
+
+  getHelpMessage?: (props: HelpProps<C>) => React.ReactNode;
 }
 
 interface BaseBuildColumnArgs {
@@ -223,7 +235,12 @@ interface FieldlessOperationDefinition<C extends BaseIndexPatternColumn> {
    * Function turning a column into an agg config passed to the `esaggs` function
    * together with the agg configs returned from other columns.
    */
-  toEsAggsFn: (column: C, columnId: string, indexPattern: IndexPattern) => ExpressionAstFunction;
+  toEsAggsFn: (
+    column: C,
+    columnId: string,
+    indexPattern: IndexPattern,
+    layer: IndexPatternLayer
+  ) => ExpressionAstFunction;
 }
 
 interface FieldBasedOperationDefinition<C extends BaseIndexPatternColumn> {
@@ -262,7 +279,19 @@ interface FieldBasedOperationDefinition<C extends BaseIndexPatternColumn> {
    * Function turning a column into an agg config passed to the `esaggs` function
    * together with the agg configs returned from other columns.
    */
-  toEsAggsFn: (column: C, columnId: string, indexPattern: IndexPattern) => ExpressionAstFunction;
+  toEsAggsFn: (
+    column: C,
+    columnId: string,
+    indexPattern: IndexPattern,
+    layer: IndexPatternLayer
+  ) => ExpressionAstFunction;
+  /**
+   * Optional function to return the suffix used for ES bucket paths and esaggs column id.
+   * This is relevant for multi metrics to pick the right value.
+   *
+   * @param column The current column
+   */
+  getEsAggsSuffix?: (column: C) => string;
   /**
    * Validate that the operation has the right preconditions in the state. For example:
    *
