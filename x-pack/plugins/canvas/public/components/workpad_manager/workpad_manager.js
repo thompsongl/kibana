@@ -14,6 +14,7 @@ import {
   EuiSpacer,
   EuiFlexGroup,
   EuiFlexItem,
+  useEuiTheme,
 } from '@elastic/eui';
 import { WorkpadLoader } from '../workpad_loader';
 import { WorkpadTemplates } from '../workpad_templates';
@@ -22,6 +23,7 @@ import { ComponentStrings } from '../../../i18n';
 const { WorkpadManager: strings } = ComponentStrings;
 
 export const WorkpadManager = ({ onClose }) => {
+  const [theme] = useEuiTheme();
   const tabs = [
     {
       id: 'workpadLoader',
@@ -49,7 +51,13 @@ export const WorkpadManager = ({ onClose }) => {
       <EuiModalHeader className="canvasHomeApp__modalHeader">
         <EuiFlexGroup alignItems="center" gutterSize="s">
           <EuiFlexItem grow={false}>
-            <EuiModalHeaderTitle>{strings.getModalTitle()}</EuiModalHeaderTitle>
+            <EuiModalHeaderTitle
+              css={{
+                color: theme.colors.euiColorPrimary,
+              }}
+            >
+              {strings.getModalTitle()}
+            </EuiModalHeaderTitle>
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiModalHeader>
