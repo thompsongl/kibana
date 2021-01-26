@@ -58,17 +58,16 @@ export class App extends React.PureComponent {
     }
 
     return (
-        <div className="canvas canvasContainer">
-          <Router
-            routes={routes}
-            showLoading={this.props.appState.ready === false}
-            loadingMessage={strings.getLoadingMessage()}
-            onRouteChange={this.props.onRouteChange}
-            onLoad={() => this.props.setAppReady(true)}
-            onError={(err) => this.props.setAppError(err)}
-          />
-        </div>
-      </EuiThemeProvider>
+      <div className="canvas canvasContainer">
+        <Router
+          routes={routes}
+          showLoading={this.props.appState.ready === false}
+          loadingMessage={strings.getLoadingMessage()}
+          onRouteChange={this.props.onRouteChange}
+          onLoad={() => this.props.setAppReady(true)}
+          onError={(err) => this.props.setAppError(err)}
+        />
+      </div>
     );
   }
 }
