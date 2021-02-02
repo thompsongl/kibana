@@ -28,6 +28,7 @@ export const ReactDomServer = require('react-dom/server');
 export const ReactRouter = require('react-router'); // eslint-disable-line
 export const ReactRouterDom = require('react-router-dom');
 export const StyledComponents = require('styled-components');
+export const EmotionReact = require('@emotion/react');
 
 Moment.tz.load(require('moment-timezone/data/packed/latest.json'));
 
