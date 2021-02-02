@@ -7,6 +7,7 @@
 import { EuiIcon } from '@elastic/eui';
 import PropTypes from 'prop-types';
 import React, { ChangeEvent, FocusEvent, FunctionComponent } from 'react';
+import { css } from '@emotion/react';
 import { ComponentStrings } from '../../../../../i18n';
 
 const { DropdownFilter: strings } = ComponentStrings;
@@ -59,10 +60,15 @@ export const DropdownFilter: FunctionComponent<Props> = ({
     );
   });
 
+  const styles = css`
+    color: #ff0000;
+  `;
+
   /* eslint-disable jsx-a11y/no-onchange */
   return (
     <div className="canvasDropdownFilter">
       <select
+        css={styles}
         className="canvasDropdownFilter__select"
         value={value}
         onChange={changeHandler}

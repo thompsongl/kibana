@@ -6,6 +6,7 @@
 
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import { css } from '@emotion/react';
 import {
   EuiTabbedContent,
   EuiModalHeader,
@@ -46,18 +47,18 @@ export const WorkpadManager = ({ onClose }) => {
       ),
     },
   ];
+
+  const styles = css`
+    color: ${theme.colors.euiColorPrimary};
+    text-decoration: underline;
+  `;
+
   return (
     <Fragment>
       <EuiModalHeader className="canvasHomeApp__modalHeader">
         <EuiFlexGroup alignItems="center" gutterSize="s">
           <EuiFlexItem grow={false}>
-            <EuiModalHeaderTitle
-              css={{
-                color: theme.colors.euiColorPrimary,
-              }}
-            >
-              {strings.getModalTitle()}
-            </EuiModalHeaderTitle>
+            <EuiModalHeaderTitle css={styles}>{strings.getModalTitle()}</EuiModalHeaderTitle>
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiModalHeader>
