@@ -20,12 +20,17 @@ module.exports = () => {
         },
       ],
       require('./common_preset'),
-    ],
-    plugins: [
       [
-        require.resolve('babel-plugin-styled-components'),
+        require.resolve('@emotion/babel-preset-css-prop'),
         {
-          fileName: false,
+          labelFormat: '[local]',
+          // importMap: {
+          //   '@elastic/eui': {
+          //     css: {
+          //       canonicalImport: ['@emotion/react', 'css'],
+          //     },
+          //   },
+          // },
         },
       ],
     ],
@@ -42,5 +47,11 @@ module.exports = () => {
         ],
       },
     },
+    overrides: [
+      {
+        exclude: [/x-pack[\/\\]plugins[\/\\]canvas[\/\\]/],
+        plugins: [[require.resolve('babel-plugin-styled-components')]],
+      },
+    ],
   };
 };

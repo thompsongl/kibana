@@ -12,6 +12,10 @@ import { I18nProvider } from '@kbn/i18n/react';
 import { i18n } from '@kbn/i18n';
 import { Provider } from 'react-redux';
 import { BehaviorSubject } from 'rxjs';
+import {
+  EuiThemeProvider,
+  // DefaultEuiTheme
+} from '@elastic/eui';
 
 import { AppMountParameters, CoreStart, CoreSetup, AppUpdater } from 'kibana/public';
 
@@ -56,9 +60,22 @@ export const renderApp = (
     <KibanaContextProvider services={{ ...plugins, ...coreStart }}>
       <ServicesProvider providers={services}>
         <I18nProvider>
-          <Provider store={canvasStore}>
-            <App />
-          </Provider>
+          <EuiThemeProvider
+          // theme={DefaultEuiTheme}
+          // colorMode="light"
+          // overrides={{
+          //   light: {
+          //     colors: { euiColorPrimary: '#8A07BD' },
+          //   },
+          //   dark: {
+          //     colors: { euiColorPrimary: '#BD07A5' },
+          //   },
+          // }}
+          >
+            <Provider store={canvasStore}>
+              <App />
+            </Provider>
+          </EuiThemeProvider>
         </I18nProvider>
       </ServicesProvider>
     </KibanaContextProvider>,

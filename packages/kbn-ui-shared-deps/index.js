@@ -31,6 +31,7 @@ exports.externals = {
   'react-router': '__kbnSharedDeps__.ReactRouter',
   'react-router-dom': '__kbnSharedDeps__.ReactRouterDom',
   'styled-components': '__kbnSharedDeps__.StyledComponents',
+  '@emotion/react': '__kbnSharedDeps__.EmotionReact',
   '@kbn/monaco': '__kbnSharedDeps__.KbnMonaco',
   '@kbn/ui-shared-deps/theme': '__kbnSharedDeps__.Theme',
   // this is how plugins/consumers from npm load monaco
