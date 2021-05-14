@@ -5,7 +5,7 @@
  * 2.0.
  */
 
-import React, { FC, useCallback, useState, useMemo, useEffect } from 'react';
+import React, { FC, useState, useMemo, useEffect } from 'react';
 import { EuiCallOut, EuiLoadingChart, EuiResizeObserver, EuiText } from '@elastic/eui';
 import { Observable } from 'rxjs';
 import { FormattedMessage } from '@kbn/i18n/react';
@@ -27,7 +27,7 @@ import { UI_SETTINGS } from '../../../../../../src/plugins/data/common';
 import { TimeBuckets } from '../../application/util/time_buckets';
 import { EXPLORER_ENTITY_FIELD_SELECTION_TRIGGER } from '../../ui_actions/triggers';
 
-const RESIZE_THROTTLE_TIME_MS = 500;
+const RESIZE_THROTTLE_TIME_MS = 300;
 
 export interface EmbeddableAnomalyChartsContainerProps {
   id: string;
@@ -96,12 +96,9 @@ export const EmbeddableAnomalyChartsContainer: FC<EmbeddableAnomalyChartsContain
     chartWidth,
     severity.val
   );
-  const resizeHandler = useCallback(
-    throttle((e: { width: number; height: number }) => {
-      setChartWidth(e.width);
-    }, RESIZE_THROTTLE_TIME_MS),
-    []
-  );
+  const resizeHandler = throttle((e: { width: number; height: number }) => {
+    setChartWidth(e.width);
+  }, RESIZE_THROTTLE_TIME_MS);
 
   if (error) {
     return (
