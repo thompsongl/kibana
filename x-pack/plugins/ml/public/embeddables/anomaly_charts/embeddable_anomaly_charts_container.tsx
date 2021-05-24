@@ -98,9 +98,9 @@ export const EmbeddableAnomalyChartsContainer: FC<EmbeddableAnomalyChartsContain
   );
   const resizeHandler = useCallback(
     throttle((e: { width: number; height: number }) => {
-      setChartWidth(e.width);
+      if (e.width !== chartWidth) setChartWidth(e.width);
     }, RESIZE_THROTTLE_TIME_MS),
-    []
+    [setChartWidth]
   );
 
   if (error) {
