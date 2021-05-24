@@ -27,7 +27,7 @@ import { UI_SETTINGS } from '../../../../../../src/plugins/data/common';
 import { TimeBuckets } from '../../application/util/time_buckets';
 import { EXPLORER_ENTITY_FIELD_SELECTION_TRIGGER } from '../../ui_actions/triggers';
 
-const RESIZE_THROTTLE_TIME_MS = 500;
+const RESIZE_THROTTLE_TIME_MS = 750;
 
 export interface EmbeddableAnomalyChartsContainerProps {
   id: string;
