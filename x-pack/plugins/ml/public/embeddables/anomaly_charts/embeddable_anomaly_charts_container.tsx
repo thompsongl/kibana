@@ -27,7 +27,7 @@ import { UI_SETTINGS } from '../../../../../../src/plugins/data/common';
 import { TimeBuckets } from '../../application/util/time_buckets';
 import { EXPLORER_ENTITY_FIELD_SELECTION_TRIGGER } from '../../ui_actions/triggers';
 
-const RESIZE_THROTTLE_TIME_MS = 750;
+const RESIZE_THROTTLE_TIME_MS = 500;
 
 export interface EmbeddableAnomalyChartsContainerProps {
   id: string;
@@ -98,9 +98,7 @@ export const EmbeddableAnomalyChartsContainer: FC<EmbeddableAnomalyChartsContain
   );
   const resizeHandler = useCallback(
     throttle((e: { width: number; height: number }) => {
-      if (e.width !== chartWidth) {
-        setChartWidth(e.width);
-      }
+      requestAnimationFrame(() => setChartWidth(e.width));
     }, RESIZE_THROTTLE_TIME_MS),
     [setChartWidth]
   );
@@ -151,7 +149,6 @@ export const EmbeddableAnomalyChartsContainer: FC<EmbeddableAnomalyChartsContain
             overflowY: 'auto',
             overflowX: 'hidden',
             padding: '8px',
-            background: 'blue',
           }}
           data-test-subj={`mlExplorerEmbeddable_${embeddableContext.id}`}
           ref={resizeRef}
