@@ -97,12 +97,11 @@ export const EmbeddableAnomalyChartsContainer: FC<EmbeddableAnomalyChartsContain
     severity.val
   );
   const resizeHandler = useCallback(
-    () =>
-      throttle((e: { width: number; height: number }) => {
-        if (e.width !== chartWidth) {
-          setChartWidth(e.width);
-        }
-      }, RESIZE_THROTTLE_TIME_MS),
+    throttle((e: { width: number; height: number }) => {
+      if (e.width !== chartWidth) {
+        setChartWidth(e.width);
+      }
+    }, RESIZE_THROTTLE_TIME_MS),
     [setChartWidth]
   );
 
@@ -152,6 +151,7 @@ export const EmbeddableAnomalyChartsContainer: FC<EmbeddableAnomalyChartsContain
             overflowY: 'auto',
             overflowX: 'hidden',
             padding: '8px',
+            background: 'blue',
           }}
           data-test-subj={`mlExplorerEmbeddable_${embeddableContext.id}`}
           ref={resizeRef}
